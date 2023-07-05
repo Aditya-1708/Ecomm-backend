@@ -27,7 +27,7 @@ function update(){//converting from volatile to non volatile
 
 
 app.post('/admin/signup',(req,res)=>{//signup
-    const fileName='DB.json';
+    const fileName='DBadmin.json';
     const fileLoc=path.join(__dirname,fileName);
     fs.readFile(fileLoc,'utf8',(err,data)=>{
         if(err){
@@ -61,7 +61,7 @@ app.post('/admin/signup',(req,res)=>{//signup
 
 
 app.post('/admin/login',(req,res)=>{//authenticate login
-    const fileName='DB.json';
+    const fileName='DBadmin.json';
     const fileLoc=path.join(__dirname,fileName);
     fs.readFile(fileLoc,'utf8',(err,data)=>{
         if(err){
@@ -98,7 +98,7 @@ app.post('/admin/login',(req,res)=>{//authenticate login
 
 
 app.post('/admin/courses',(req,res)=>{//new course creation
-    const fileName='DB.json';
+    const fileName='DBadmin.json';
     const fileLoc=path.join(__dirname,fileName);
     fs.readFile(fileLoc,'utf8',(err,data)=>{
         if(err){
@@ -119,7 +119,7 @@ app.post('/admin/courses',(req,res)=>{//new course creation
                 });
             }
             else if(backendMatch.password===login.password){
-                const fileNameC='courseDB.json'
+                const fileNameC='DBCourseAdmin.json'
                 const filelocC=path.join(__dirname,fileNameC)
                 fs.readFile(filelocC,'utf8',(err,data)=>{
                     if(err){
@@ -132,7 +132,8 @@ app.post('/admin/courses',(req,res)=>{//new course creation
                             description:req.body.description,
                             price:req.body.price,
                             imageLink:req.body.imageLink,
-                            published:req.body.published
+                            published:req.body.published,
+                            courseId:(int)(Math.random()*1000000)
                         });
                     }
                 });
@@ -140,8 +141,119 @@ app.post('/admin/courses',(req,res)=>{//new course creation
         }
     });
 });
-app.put();//edit courses
-app.get();//returns all courses
+
+
+
+
+
+app.put('/admin/courses/:courseId',(req,res)=>{//edit courses
+    const fileName='DBAdmin.json';
+    const fileLoc=path.join(__dirname,fileName);
+    fs.readFile(fileLoc,'utf8',(err,data)=>{
+        if(err){
+            console.log(err);
+        }
+        else{
+            var DB=JSON.parse(data);
+            const backendMatch=DB.find((user)=>{
+                user.username===login.username;
+            });
+            if(backendMatch===undefined){
+                res.json({
+                    message:'Invalid username'
+                });
+            }
+            else if(backendMatch.password===login.password){
+                const fileNameC='DBCourseAdmin.json'
+                const filelocC=path.join(__dirname,fileNameC)
+                fs.readFile(filelocC,'utf8',(err,data)=>{
+                    if(err){
+                        console.log(err);
+                    }
+                    else{
+                        var courseDB=JSON.parse(data);
+                        const courselist=courseDB[backendMatch.courseLocation];
+                        courselist.forEach((course)=>{
+                            if(course.id===req.params.id){
+                                course.title=req.body.title;
+                                course.description=req.body.description;
+                                course.price=req.body.price;
+                                course.imageLink=req.body.imageLink;
+                                course.published=req.body.published;
+                                res.json({
+                                message:'Course updated successfully'
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    });
+});
+
+
+
+
+
+app.get('/admin/courses',(req,res)=>{
+    const fileName='DBAdmin.json';
+    const fileLoc=path.join(__dirname,fileName);
+    const AdminUserName=req.headers.username;
+    const AdminPassword=req.headers.password;
+    fs.readFile(fileLoc,'utf8',(err,data)=>{
+        if(err){
+            console.log(err);
+        }
+        else{
+            const AdminDB=JSON.parse([data]);
+            const Admin=AdminDB.find((element)=>{
+                (element.username===AdminUserName&&element.password===AdminPassword)
+            });
+            if(Admin===undefined){
+                console.log("Invalid Username or Password");
+            }
+            else{
+                const fileNameC='DBCourseAdmin.json'
+                const filelocC=path.join(__dirname,fileNameC)
+                fs.readFile(filelocC,'utf8',(err,data)=>{
+                    if(err){
+                        console.log(err);
+                    }
+                    else{
+                        var courseDB=JSON.parse(data);
+                        const courselist=courseDB[backendMatch.courseLocation];
+                        courselist.forEach((course)=>{
+                            if(course.id===Admin.courseloc){
+                                res.json({
+                                    courses:
+                                });
+                            }
+                        });
+                    }
+            });
+        }
+    }
+});
+});//returns all courses
+
+
+
+app.post('/users/signup',(req,res)=>{//user login
+
+});
+app.post('/users/login',(req,res)=>{//user login
+
+});
+app.get('/users/courses',(req,res)=>{//course list
+
+});
+app.post('/users/courses/:courseId',(req,res)=>{//course purchase
+
+});
+app.get('/users/purchasedCourses',(req,res)=>{//lists all the purchased courses
+
+});
 
 
 
