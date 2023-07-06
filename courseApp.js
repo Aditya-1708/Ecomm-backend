@@ -4,7 +4,7 @@ const fs = require('fs');
 
 const path = require('path');
 
-const bodyParser = require('body-parser');
+
 
 app.use(bodyParser.json());
 
@@ -259,12 +259,5 @@ app.get('/users/purchasedCourses',(req,res)=>{//lists all the purchased courses
 
 
 app.listen(3000,()=>{
-    fs.readFile(PathForBackup,'utf8',(err,data)=>{
-        if(err){
-            console.log(err);
-        }
-        else{
-            courseloc=parseInt(data);
-        }
-    });
+    
 });
