@@ -17,7 +17,7 @@ Create separate files for each entity (admin, user, course, purchase).
    Output: { message: 'Logged in successfully', token: 'jwt_token_here' }
  - POST /admin/courses
    Description: Creates a new course.
-   Input: Headers: { 'Authorization': 'Bearer jwt_token_here' }, Body: { title: 'course title', description: 'course description', price: 100, imageLink: 'https://linktoimage.com', published: true }
+   Input: Headers: { 'Authorization': 'Bearer jwt_token_here' }, Body: 
    Output: { message: 'Course created successfully', courseId: 1 }
  - PUT /admin/courses/:courseId
    Description: Edits an existing course. courseId in the URL path should be replaced with the ID of the course to be edited.
@@ -50,3 +50,29 @@ Create separate files for each entity (admin, user, course, purchase).
    Description: Lists all the courses purchased by the user.
    Input: Headers: { 'Authorization': 'Bearer jwt_token_here' }
    Output: { purchasedCourses: [ { id: 1, title: 'course title', description: 'course description', price: 100, imageLink: 'https://linktoimage.com', published: true }, ... ] }
+jwt.verify(sentToken,secretKey,(err,decoded)=>{
+    if(err){
+      console.log(err);
+    }
+    else{
+      const username=decoded.username;
+      const password=decoded.password;
+      const ADMIN=ADMINS.find((element)=>{
+        return element.username===username&&element.password===password;
+      });
+      if(ADMIN===undefined){
+        res.status(404).send("USER NOT FOUND");
+      }
+      else{
+        const newCourse={ 
+          title:req.body.title, 
+          description:req.body.description,
+          price:req.body.price, 
+          imageLink:req.body.imageLink ,
+          published:req.body.published ,
+          courseOwner:ADMIN.username
+        }
+        COURSES.push(newCourse);
+      }
+    }
+  });v
